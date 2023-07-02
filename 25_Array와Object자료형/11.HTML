@@ -1,0 +1,38 @@
+    #include <stdio.h>
+    #include <stdlib.h>
+    // for atoi()
+    
+    #include <sys/poll.h> // for poll()
+    #include <string.h>
+    #include <strings.h> // for zero(), strncasecmp()
+    #include <sys/types.h>
+    #include <sys/socket.h>
+    #include <arpa/inet.h>
+    #include <time.h> // for time()
+    #include <unistd.h>
+    #include "Network_Common.h"
+    #define MAX_CLIENTS 10 // For the maximum clients
+
+    int main(int argc, char *argv[])
+{
+//--- Variables
+2
+struct sockaddr_in stCAddr; // Client Address
+socklen_t nCAddr;
+// Client Address Length
+struct pollfd rfds [MAX_CLIENTS + 2]; // Standard Input, Se
+int nTimeout = 0;
+int nRetval;
+int nKeepRunning = 1;
+//--- Initializes variables.
+for (int i = 0; i < MAX_CLIENTS + 2; i++)
+{
+rfds[i].fd = -1;
+rfds[i].events = 0; rfds[i].revents = 0;
+}
+if (argc != 3)
+printf("usage: %s <port> <queue>\n", argv[0]);
+{
+return -1;
+}
+[I: chat_server.c (1/6)]
