@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="detail.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+
+        </div>
+    </div>
+
+    <div class="container my-3">
+        <button class="btn btn-danger" id="price">
+            가격순정렬
+        </button>
+    </div>
+
+    <div class="container my-3">
+        <button class="btn btn-danger" id="sort1">
+            다나가순정렬
+        </button>
+    </div>
+
+    <div class="container my-3">
+        <button class="btn btn-danger" id="filter">
+            6만원이하
+        </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
+    </script>
+    <!--jquery cdn-->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+        integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+
+
+
+    <script>
+        var products = [{
+                id: 0,
+                price: 70000,
+                title: 'Blossom Dress'
+            },
+            {
+                id: 1,
+                price: 50000,
+                title: 'Springfield Shirt'
+            },
+            {
+                id: 2,
+                price: 60000,
+                title: 'Black Monastery'
+            }
+        ];
+
+
+
+
+        //카드레이아웃만드는곳
+        products.forEach((a, i) => {
+            var 템플릿 =
+                `<div class="col-sm-4">
+            <img src="https://via.placeholder.com/600" class="w-100">
+            <h5>${a.title}</h5>
+            <p>가격 : ${a.price}</p>
+            <button class="buy">구매</button>
+        </div>`;
+            $('.row').append(템플릿)
+        })
+
+        //1. 구매버튼누르면
+        //2. 지금 누르 버튼 윗윗 글자 가져와서
+        //3. local스토리지에 [글자]저장
+
+        $('.buy').click(function (e) {
+            var title = $(e.target).siblings('h5').text();
+            if (localStorage.getItem('cart') != null) {
+                var 꺼낸거 = JSON.parse(localStorage.cart);
+                //1. 자료 꺼내서
+                꺼낸거.push(title);
+                //2. 자료 추가하고 
+                localStorage.setItem('cart', JSON.stringify(꺼낸거));
+                //3. 다시 넣기 
+            } else {
+                localStorage.setItem('cart', JSON.stringify([title]));
+            }
+
+
+        })
+
+        //구매버튼 누르면 장바구니에 상품명 추가(브라우저 안에 몰래 데이터 저장가능)
+        localStorage.setItem('이름', 'kim') //저장
+        localStorage.getItem('이름'); //출력
+        localStorage.removeItem('이름'); //삭제
+
+        localStorage.setItem('num', [1, 2, 3]); //강제로 문자로 변환해줌 //'1,2,3'
+
+        //localStorage에 array,objecet 저장하려면?
+        //array/object->JSON으로 바꾸면 가능함
+        var arr = [1, 2, 3];
+        var newArr = JSON.stringify(arr);
+        localStorage.setItem('num', newArr);
+        var 꺼낸거 = localStorage.getItem('num'); //문자처럼 인식하여 이상하게출력
+
+        //다시 JSON을 array/object로 바꿔는줌-> JSON.parse()
+        console.log(JSON.parse(꺼낸거)[0]);
+
+
+
+        //6만원 이하 상품보기 기능
+        $('#filter').click(function () {
+            var newProduct = products.filter(function (a) {
+                return a.price <= 60000
+            });
+            $('.row').html('');
+            newProduct.forEach((a, i) => {
+                var 템플릿 =
+                    `<div class="col-sm-4">
+                <img src="https://via.placeholder.com/600" class="w-100">
+                <h5>${newProduct[i].title}</h5>
+                <p>가격 : ${newProduct[i].price}</p>
+            </div>`;
+                $('.row').append(템플릿)
+            })
+        })
+
+
+
+
+
+        //다나가순 정렬
+        $('#sort1').click(function () {
+            products.sort(function (a, b) {
+                if (a.title < b.title) {
+                    return 1
+                } else {
+                    return -1
+                }
+
+            });
+            $('.row').html(''); //1. 카드 3개있던 div의 내용 삭제
+
+            products.forEach((a, i) => { //2. products개수만큼 카드 생성
+                var 템플릿 =
+                    `<div class="col-sm-4">
+                <img src="https://via.placeholder.com/600" class="w-100">
+                <h5>${a.title}</h5>
+                <p>가격 : ${a.price}</p>
+            </div>`;
+                $('.row').append(템플릿)
+            })
+        })
+
+        //버튼 누르면 products안의 데이터를 가격순으로 정렬
+        $('#price').click(function () {
+            products.sort(function (a, b) {
+                return a.price - b.price
+            });
+
+            $('.row').html(''); //1. 카드 3개있던 div의 내용 삭제
+
+            products.forEach((a, i) => { //2. products개수만큼 카드 생성
+                var 템플릿 =
+                    `<div class="col-sm-4">
+                    <img src="https://via.placeholder.com/600" class="w-100">
+                    <h5>${a.title}</h5>
+                    <p>가격 : ${a.price}</p>
+            </div>`;
+                $('.row').append(템플릿)
+            })
+        })
+    </script>
+
+    <div class="container">
+        <button class="btn btn-danger" id="more">더보기</button>
+    </div>
+
+    <script>
+        $('#more').click(function () {
+            $.get('https://codingapple1.github.io/js/more1.json')
+                .done((data) => {
+                    console.log(data);
+
+
+                    data.forEach((a, i) => {
+                        var 템플릿 =
+                            `<div class="col-sm-4">
+                        <img src="https://via.placeholder.com/600" class="w-100">
+                        <h5>${data[i].title}</h5>
+                        <p>가격 : ${data[i].price}</p>
+                </div>`;
+                        $('.row').append(템플릿)
+                    })
+
+                })
+        })
+    </script>
+</body>
+
+</html>
